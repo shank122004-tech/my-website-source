@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DivineMantra 3D Universe | Premium GLB Models</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Admin Access</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+                    <button id="loginBtn" class="glow-button">Login</button>
+                </div>
+                <p id="loginError" class="error-message"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel hidden">
+        <div class="admin-header">
+            <h2>Admin Dashboard</h2>
+            <button id="logoutBtn" class="glow-button">Logout</button>
+        </div>
+        <div class="admin-content">
+            <div class="upload-section glass-card">
+                <h3>Upload New Model</h3>
+                <div class="upload-form">
+                    <div class="input-group">
+                        <label for="modelName">Model Name</label>
+                        <input type="text" id="modelName" placeholder="Enter model name">
+                    </div>
+                    <div class="input-group">
+                        <label for="modelThumbnail">Thumbnail Image</label>
+                        <input type="file" id="modelThumbnail" accept="image/*">
+                    </div>
+                    <div class="input-group">
+                        <label for="modelFile">GLB Model File</label>
+                        <input type="file" id="modelFile" accept=".glb">
+                    </div>
+                    <button id="uploadBtn" class="glow-button">Upload Model</button>
+                </div>
+            </div>
+            <div class="models-management">
+                <h3>Manage Models</h3>
+                <div id="adminModelsGrid" class="models-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Website -->
+    <div id="mainWebsite">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <h1>DivineMantra 3D Universe</h1>
+                    <div class="gold-glow"></div>
+                </div>
+                <nav class="nav">
+                    <button id="adminAccessBtn" class="nav-btn">Admin Access</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">Premium 3D Models Collection</h1>
+                    <p class="hero-subtitle">Download exclusive, app-safe GLB models with divine quality and security verification</p>
+                    <div class="hero-badge">
+                        <span class="badge-icon"><i class="fas fa-shield-alt"></i></span>
+                        <span>App Safe Model Verified</span>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="floating-cube">
+                        <div class="cube-face front"></div>
+                        <div class="cube-face back"></div>
+                        <div class="cube-face right"></div>
+                        <div class="cube-face left"></div>
+                        <div class="cube-face top"></div>
+                        <div class="cube-face bottom"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="gold-glow-bg"></div>
+        </section>
+
+        <!-- Models Gallery -->
+        <section class="models-section">
+            <div class="container">
+                <h2 class="section-title">Available Models</h2>
+                <div id="modelsGrid" class="models-grid">
+                    <!-- Models will be loaded here -->
+                </div>
+                <div id="emptyState" class="empty-state">
+                    <i class="fas fa-cube"></i>
+                    <h3>No Models Available</h3>
+                    <p>Check back later or contact admin to upload new models</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-brand">
+                        <h3>DivineMantra 3D Universe</h3>
+                        <p>Premium GLB Models with Advanced Security</p>
+                    </div>
+                    <div class="footer-info">
+                        <p>&copy; 2023 DivineMantra. All rights reserved.</p>
+                        <p>100 CR Budget Premium Experience</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
