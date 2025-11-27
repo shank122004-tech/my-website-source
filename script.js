@@ -6,6 +6,9 @@ const STORE_NAME = 'models';
 // Admin Configuration
 const ADMIN_PASSWORD = "Shashank@122004";
 
+// Security Configuration
+const SECURITY_SIGNATURE = "DM-9937-SECURE-CODE";
+
 // Global Variables
 let db = null;
 let isAdmin = false;
@@ -27,6 +30,9 @@ const uploadBtn = document.getElementById('uploadBtn');
 const modelName = document.getElementById('modelName');
 const modelThumbnail = document.getElementById('modelThumbnail');
 const modelFile = document.getElementById('modelFile');
+const uploadStatus = document.querySelector('.upload-status');
+const progressFill = document.querySelector('.progress-fill');
+const statusText = document.querySelector('.status-text');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', initApp);
@@ -143,11 +149,19 @@ async function handleUpload() {
     }
     
     try {
+        // Show upload status
+        showUploadStatus(true);
+        updateProgress(10, 'Reading GLB file...');
+        
         // Process GLB file with security layers
         const processedGlb = await processGLBFile(glbFile, name);
         
+        updateProgress(60, 'Processing thumbnail...');
+        
         // Read thumbnail as data URL
         const thumbnail = await readFileAsDataURL(thumbnailFile);
+        
+        updateProgress(80, 'Saving model...');
         
         // Create model object
         const model = {
@@ -161,16 +175,38 @@ async function handleUpload() {
         // Save to database
         await saveModel(model);
         
-        // Reset form and reload models
-        resetUploadForm();
-        await loadModels();
-        await loadAdminModels();
+        updateProgress(100, 'Upload complete!');
         
-        alert('Model uploaded successfully with security features applied!');
+        // Reset form and reload models
+        setTimeout(() => {
+            resetUploadForm();
+            showUploadStatus(false);
+            loadModels();
+            loadAdminModels();
+            alert('Model uploaded successfully with security features applied!');
+        }, 1000);
+        
     } catch (error) {
         console.error('Upload error:', error);
+        showUploadStatus(false);
         alert('Error uploading model: ' + error.message);
     }
+}
+
+// Show/Hide Upload Status
+function showUploadStatus(show) {
+    if (show) {
+        uploadStatus.classList.remove('hidden');
+    } else {
+        uploadStatus.classList.add('hidden');
+        progressFill.style.width = '0%';
+    }
+}
+
+// Update Progress Bar
+function updateProgress(percent, text) {
+    progressFill.style.width = `${percent}%`;
+    statusText.textContent = text;
 }
 
 // Process GLB File with Security Layers
@@ -181,10 +217,10 @@ async function processGLBFile(file, modelName) {
         reader.onload = async (event) => {
             try {
                 const arrayBuffer = event.target.result;
-                const glbData = new Uint8Array(arrayBuffer);
+                updateProgress(30, 'Applying security signature...');
                 
                 // Apply security layers
-                const securedGlb = await applySecurityLayers(glbData, modelName);
+                const securedGlb = await applySecurityLayers(arrayBuffer, modelName);
                 resolve(securedGlb);
             } catch (error) {
                 reject(error);
@@ -197,28 +233,125 @@ async function processGLBFile(file, modelName) {
 }
 
 // Apply Security Layers to GLB
-async function applySecurityLayers(glbData, modelName) {
-    // Layer 1: Auto-rename is handled in the model object
+async function applySecurityLayers(arrayBuffer, modelName) {
+    try {
+        // Parse GLB structure
+        const glbData = new Uint8Array(arrayBuffer);
+        
+        // GLB structure: [header (12 bytes)] + [chunk1] + [chunk2] + ...
+        const header = glbData.slice(0, 12);
+        const dataView = new DataView(arrayBuffer);
+        
+        // Check if it's a valid GLB file (magic: "glTF")
+        const magic = dataView.getUint32(0, true);
+        if (magic !== 0x46546C67) { // "glTF" in little-endian
+            throw new Error('Invalid GLB file format');
+        }
+        
+        const version = dataView.getUint32(4, true);
+        const length = dataView.getUint32(8, true);
+        
+        let offset = 12;
+        let jsonChunk = null;
+        let binChunk = null;
+        
+        // Parse chunks
+        while (offset < length) {
+            const chunkLength = dataView.getUint32(offset, true);
+            const chunkType = dataView.getUint32(offset + 4, true);
+            
+            if (chunkType === 0x4E4F534A) { // JSON chunk
+                const chunkData = glbData.slice(offset + 8, offset + 8 + chunkLength);
+                const jsonText = new TextDecoder().decode(chunkData);
+                jsonChunk = JSON.parse(jsonText);
+            } else if (chunkType === 0x004E4942) { // BIN chunk
+                binChunk = glbData.slice(offset + 8, offset + 8 + chunkLength);
+            }
+            
+            offset += 8 + chunkLength;
+        }
+        
+        if (!jsonChunk) {
+            throw new Error('No JSON chunk found in GLB file');
+        }
+        
+        updateProgress(40, 'Injecting security signature...');
+        
+        // Add security signature to glTF asset
+        if (!jsonChunk.asset) {
+            jsonChunk.asset = {};
+        }
+        jsonChunk.asset.signature = SECURITY_SIGNATURE;
+        jsonChunk.asset.generator = "DivineMantra Security System";
+        
+        updateProgress(50, 'Rebuilding GLB structure...');
+        
+        // Rebuild GLB with security signature
+        const securedGlb = rebuildGLB(jsonChunk, binChunk);
+        
+        return securedGlb;
+    } catch (error) {
+        console.error('Security layer application failed:', error);
+        throw new Error('Failed to apply security features: ' + error.message);
+    }
+}
+
+// Rebuild GLB with modified JSON
+function rebuildGLB(jsonData, binData) {
+    // Convert JSON to string with proper formatting
+    const jsonString = JSON.stringify(jsonData);
     
-    // Layer 2: Add internal JSON signature
-    // Note: In a real implementation, we would parse the GLB structure
-    // and inject the signature into the JSON chunk
-    // For this demo, we'll simulate the process
+    // Calculate padding for JSON chunk (multiple of 4)
+    const jsonPadding = (4 - (jsonString.length % 4)) % 4;
+    const paddedJsonString = jsonString + ' '.repeat(jsonPadding);
+    const jsonChunkData = new TextEncoder().encode(paddedJsonString);
     
-    const signature = "DM-9937-SECURE-CODE";
+    // Calculate total length
+    let totalLength = 12; // Header
+    totalLength += 8 + jsonChunkData.length; // JSON chunk
     
-    // In a production environment, we would:
-    // 1. Parse the GLB binary structure
-    // 2. Extract the JSON chunk
-    // 3. Modify the JSON to include the signature
-    // 4. Reconstruct the GLB with the modified JSON
+    if (binData) {
+        const binPadding = (4 - (binData.length % 4)) % 4;
+        totalLength += 8 + binData.length + binPadding; // BIN chunk
+    }
     
-    // For this demo, we'll return the original data
-    // with a note that signature injection would happen here
-    console.log(`Applying security signature to ${modelName}: ${signature}`);
+    // Create new GLB buffer
+    const newGlb = new Uint8Array(totalLength);
+    const dataView = new DataView(newGlb.buffer);
     
-    // Return the processed GLB data (in real implementation, this would be modified)
-    return glbData;
+    let offset = 0;
+    
+    // Write header
+    dataView.setUint32(offset, 0x46546C67, true); // Magic: "glTF"
+    dataView.setUint32(offset + 4, 2, true); // Version: 2
+    dataView.setUint32(offset + 8, totalLength, true); // Total length
+    offset += 12;
+    
+    // Write JSON chunk
+    dataView.setUint32(offset, jsonChunkData.length, true); // Chunk length
+    dataView.setUint32(offset + 4, 0x4E4F534A, true); // Chunk type: JSON
+    offset += 8;
+    
+    newGlb.set(jsonChunkData, offset);
+    offset += jsonChunkData.length;
+    
+    // Write BIN chunk if exists
+    if (binData) {
+        const binPadding = (4 - (binData.length % 4)) % 4;
+        dataView.setUint32(offset, binData.length + binPadding, true); // Chunk length
+        dataView.setUint32(offset + 4, 0x004E4942, true); // Chunk type: BIN
+        offset += 8;
+        
+        newGlb.set(binData, offset);
+        offset += binData.length;
+        
+        // Add padding
+        for (let i = 0; i < binPadding; i++) {
+            newGlb[offset + i] = 0x00;
+        }
+    }
+    
+    return newGlb;
 }
 
 // Read file as Data URL
@@ -287,7 +420,7 @@ function renderModels(models, container, isAdminView) {
 // Create Model Card Element
 function createModelCard(model, isAdminView) {
     const card = document.createElement('div');
-    card.className = 'glass-card model-card';
+    card.className = `glass-card model-card ${isAdminView ? 'admin-model-card' : ''}`;
     
     const previewHtml = model.thumbnail ? 
         `<img src="${model.thumbnail}" alt="${model.name}" class="model-thumbnail">` :
@@ -406,5 +539,4 @@ function addSampleData() {
 }
 
 // Uncomment the line below to add sample data on first load
-
 // addSampleData();
