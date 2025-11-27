@@ -4,7 +4,7 @@ const DB_VERSION = 1;
 const STORE_NAME = 'models';
 
 // Admin Configuration
-const ADMIN_PASSWORD = "divinemantra_super_admin_999";
+const ADMIN_PASSWORD = "Shashank@122004";
 
 // Global Variables
 let db = null;
@@ -406,4 +406,5 @@ function addSampleData() {
 }
 
 // Uncomment the line below to add sample data on first load
+
 // addSampleData();
