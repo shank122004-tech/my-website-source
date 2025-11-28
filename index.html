@@ -10,9 +10,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Animated Background Particles -->
+    <div class="particles-container">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <!-- Admin Login Modal -->
     <div id="adminLoginModal" class="modal">
-        <div class="modal-content glass-card">
+        <div class="modal-content glass-card premium-card">
             <div class="modal-header">
                 <h2>Admin Access</h2>
                 <span class="close-modal">&times;</span>
@@ -20,7 +34,10 @@
             <div class="modal-body">
                 <div class="input-group">
                     <input type="password" id="adminPassword" placeholder="Enter Admin Password">
-                    <button id="loginBtn" class="glow-button">Login</button>
+                    <button id="loginBtn" class="glow-button premium-btn">
+                        <span class="btn-shine"></span>
+                        Login
+                    </button>
                 </div>
                 <p id="loginError" class="error-message"></p>
             </div>
@@ -29,12 +46,18 @@
 
     <!-- Admin Panel -->
     <div id="adminPanel" class="admin-panel hidden">
-        <div class="admin-header">
-            <h2>Admin Dashboard</h2>
-            <button id="logoutBtn" class="glow-button">Logout</button>
+        <div class="admin-header premium-header">
+            <div class="admin-logo">
+                <h2>Admin Dashboard</h2>
+                <div class="gold-glow"></div>
+            </div>
+            <button id="logoutBtn" class="glow-button premium-btn">
+                <span class="btn-shine"></span>
+                Logout
+            </button>
         </div>
         <div class="admin-content">
-            <div class="upload-section glass-card">
+            <div class="upload-section glass-card premium-card">
                 <h3>Upload New Model</h3>
                 <div class="upload-form">
                     <div class="input-group">
@@ -49,12 +72,15 @@
                         <label for="modelFile">GLB Model File</label>
                         <input type="file" id="modelFile" accept=".glb">
                     </div>
-                    <button id="uploadBtn" class="glow-button">Upload Model</button>
+                    <button id="uploadBtn" class="glow-button premium-btn">
+                        <span class="btn-shine"></span>
+                        Upload Model
+                    </button>
                 </div>
             </div>
             
             <!-- Upload Status Section -->
-            <div class="upload-status glass-card hidden">
+            <div class="upload-status glass-card premium-card hidden">
                 <h3>Upload Status</h3>
                 <div class="progress-bar">
                     <div class="progress-fill"></div>
@@ -64,7 +90,7 @@
             
             <div class="models-management">
                 <h3>Manage Models</h3>
-                <div id="adminModelsGrid" class="models-grid"></div>
+                <div id="adminModelsGrid" class="models-grid admin-grid"></div>
             </div>
         </div>
     </div>
@@ -72,30 +98,45 @@
     <!-- Main Website -->
     <div id="mainWebsite">
         <!-- Header -->
-        <header class="header">
+        <header class="header premium-header">
             <div class="container">
                 <div class="logo">
                     <h1>DivineMantra 3D Universe</h1>
                     <div class="gold-glow"></div>
                 </div>
+                <a href="download/spiritual-app.apk" download class="apk-download-link">
+    Download Divine Mandir 3D App (APK)
+</a>
+
                 <nav class="nav">
-                    <button id="adminAccessBtn" class="nav-btn">Admin Access</button>
+                    <button id="adminAccessBtn" class="nav-btn premium-btn">
+                        <span class="btn-shine"></span>
+                        Admin Access
+                    </button>
                 </nav>
             </div>
+            <div class="header-glow"></div>
         </header>
 
         <!-- Hero Section -->
-        <section class="hero">
+        <section class="hero premium-hero">
+            <div class="hero-glow"></div>
             <div class="container">
-                <div class="hero-content">
+                <div class="hero-content fade-up">
                     <h1 class="hero-title">Premium 3D Models Collection</h1>
                     <p class="hero-subtitle">Download exclusive, app-safe GLB models with divine quality and security verification</p>
                     <div class="hero-badge">
                         <span class="badge-icon"><i class="fas fa-shield-alt"></i></span>
                         <span>App Safe Model Verified</span>
                     </div>
+                    <div class="hero-actions">
+                        <button class="glow-button premium-btn explore-btn">
+                            <span class="btn-shine"></span>
+                            Explore Collection
+                        </button>
+                    </div>
                 </div>
-                <div class="hero-visual">
+                <div class="hero-visual fade-up">
                     <div class="floating-cube">
                         <div class="cube-face front"></div>
                         <div class="cube-face back"></div>
@@ -103,20 +144,20 @@
                         <div class="cube-face left"></div>
                         <div class="cube-face top"></div>
                         <div class="cube-face bottom"></div>
+                        <div class="cube-glow"></div>
                     </div>
                 </div>
             </div>
-            <div class="gold-glow-bg"></div>
         </section>
 
         <!-- Models Gallery -->
         <section class="models-section">
             <div class="container">
-                <h2 class="section-title">Available Models</h2>
-                <div id="modelsGrid" class="models-grid">
+                <h2 class="section-title fade-up">Available Models</h2>
+                <div id="modelsGrid" class="models-grid premium-grid">
                     <!-- Models will be loaded here -->
                 </div>
-                <div id="emptyState" class="empty-state">
+                <div id="emptyState" class="empty-state fade-up">
                     <i class="fas fa-cube"></i>
                     <h3>No Models Available</h3>
                     <p>Check back later or contact admin to upload new models</p>
@@ -125,7 +166,7 @@
         </section>
 
         <!-- Footer -->
-        <footer class="footer">
+        <footer class="footer premium-footer">
             <div class="container">
                 <div class="footer-content">
                     <div class="footer-brand">
@@ -133,11 +174,12 @@
                         <p>Premium GLB Models with Advanced Security</p>
                     </div>
                     <div class="footer-info">
-                        <p>&copy; 2023 DivineMantra. All rights reserved.</p>
-                        <p>100 CR Budget Premium Experience</p>
+                        <p>&copy; 2025 DivineMantra. All rights reserved.</p>
+                        <p></p>
                     </div>
                 </div>
             </div>
+            <div class="footer-glow"></div>
         </footer>
     </div>
 
