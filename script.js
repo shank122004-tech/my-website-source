@@ -41,6 +41,7 @@ async function initApp() {
     await initDB();
     await loadModels();
     setupEventListeners();
+    addScrollAnimations();
 }
 
 // Initialize IndexedDB
@@ -64,6 +65,27 @@ function initDB() {
                 store.createIndex('name', 'name', { unique: false });
             }
         };
+    });
+}
+
+// Add scroll animations
+function addScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-up');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all elements with fade-up class
+    document.querySelectorAll('.fade-up').forEach(el => {
+        observer.observe(el);
     });
 }
 
@@ -99,6 +121,16 @@ function setupEventListeners() {
             resetLoginForm();
         }
     });
+
+    // Explore button scroll to models
+    const exploreBtn = document.querySelector('.explore-btn');
+    if (exploreBtn) {
+        exploreBtn.addEventListener('click', () => {
+            document.querySelector('.models-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        });
+    }
 }
 
 // Login Handler
@@ -411,8 +443,10 @@ function renderModels(models, container, isAdminView) {
     
     emptyState.classList.add('hidden');
     
-    models.forEach(model => {
+    models.forEach((model, index) => {
         const modelCard = createModelCard(model, isAdminView);
+        // Add animation delay for staggered effect
+        modelCard.style.animationDelay = `${index * 0.1}s`;
         container.appendChild(modelCard);
     });
 }
@@ -420,7 +454,7 @@ function renderModels(models, container, isAdminView) {
 // Create Model Card Element
 function createModelCard(model, isAdminView) {
     const card = document.createElement('div');
-    card.className = `glass-card model-card ${isAdminView ? 'admin-model-card' : ''}`;
+    card.className = `glass-card premium-card model-card ${isAdminView ? 'admin-model-card' : ''} fade-up`;
     
     const previewHtml = model.thumbnail ? 
         `<img src="${model.thumbnail}" alt="${model.name}" class="model-thumbnail">` :
@@ -437,7 +471,8 @@ function createModelCard(model, isAdminView) {
                 App Safe Model Verified
             </div>
         </div>
-        <button class="glow-button download-btn" data-id="${model.id}">
+        <button class="glow-button premium-btn download-btn" data-id="${model.id}">
+            <span class="btn-shine"></span>
             <i class="fas fa-download"></i> Download GLB
         </button>
         ${isAdminView ? `<button class="delete-btn" data-id="${model.id}"><i class="fas fa-trash"></i></button>` : ''}
